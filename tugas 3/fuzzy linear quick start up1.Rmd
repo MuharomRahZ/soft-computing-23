@@ -1,0 +1,33 @@
+---
+title: "Quick start with Fitting Fuzzy Linear Regression Models in R "
+author: "Prof Dr Suhartono M.Kom UIN Maulana Malik Ibrahim Malang"
+date: "3/20/2022"
+output: html_document
+---
+
+```{r}
+require(fuzzyreg)
+data(fuzzydat)
+fuzzydat$lee
+```
+
+```{r}
+ f = fuzzylm(y ~ x, data = fuzzydat$lee)
+print(f)
+
+```
+
+```{r}
+ plot(f, res = 20, col = "lightblue", main = "PLRLS")
+
+```
+
+```{r}
+ summary(f)
+```
+
+```{r}
+
+```
+
+

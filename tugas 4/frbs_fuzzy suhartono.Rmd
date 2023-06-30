@@ -1,0 +1,106 @@
+---
+title: "Untitled"
+author: "Prof Dr Suhartono M.Kom UIN Maulana Malik Ibrahim Malang"
+date: "9/27/2022"
+output: html_document
+---
+
+
+
+```{r}
+library(readxl)
+cmcData <- read_excel(path = "dataujiair.xlsx")
+cmcData
+```
+
+```{r}
+training <- cmcData[1:20,1:4 ]
+testing <- cmcData[21:nrow(cmcData),1:3]
+validasi <- cmcData[21:nrow(cmcData),4]
+data_research <- cmcData[21:nrow(cmcData),c(1,4)]
+training 
+testing
+validasi
+data_research 
+```
+
+```{r}
+## Define interval of data
+range.data <-apply(training, 2, range)
+range.data
+```
+
+```{r}
+## Set the method and its parameters,
+## for example, we use Wang and Mendel's algorithm
+method.type <- "WM"
+control <- list(num.labels = 15, type.mf = "GAUSSIAN", type.defuz = "WAM",
+type.tnorm = "MIN", type.snorm = "MAX", type.implication.func = "ZADEH",
+name = "sim-0")
+```
+
+```{r}
+library(frbs)
+## Learning step: Generate an FRBS model
+object.reg <- frbs.learn(training, range.data, method.type, control)
+## Predicting step: Predict for newdata
+res.test <- predict(object.reg, testing)
+## Display the FRBS model
+summary(object.reg)
+## Plot the membership functions
+plotMF(object.reg)
+```
+
+```{r}
+pred <- predict(object.reg, testing)
+```
+
+```{r}
+str(pred)
+```
+
+```{r}
+str(data_research)
+```
+
+
+```{r}
+data_research$predict <- pred
+data_research
+```
+
+
+```{r}
+data_research$residual <- (data_research$Kelayakan-data_research$predict )
+data_research
+```
+
+```{r}
+mean(data_research$predict != data_research$Kelayakan)
+```
+
+```{r}
+accuracy <- table(data_research$predict, data_research$Kelayakan)
+sum(diag(accuracy))/sum(accuracy)
+```
+
+```{r}
+library(ggplot2)
+library(reshape2)
+x <- 1:7
+real_data <- data_research$Kelayakan
+predict_data <- data_research$predict
+df <- data.frame(x, real_data , predict_data )
+
+# melt the data to a long format
+df2 <- melt(data = df, id.vars = "x")
+
+# plot, using the aesthetics argument 'colour'
+ggplot(data = df2, aes(x = x, y = value, colour = variable))+
+  geom_point(alpha = 1/2,size=7) + 
+  theme(legend.justification = "top") +
+  labs(title = "Graph of Prediction  using Fuzzy logic", 
+         subtitle = "Mamdani", 
+         y = "Waktu Pompa", x = "Iterasi") +
+theme(axis.text.x = element_text(angle = -45))
+```

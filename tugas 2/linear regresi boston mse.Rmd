@@ -1,0 +1,83 @@
+---
+title: "Untitled"
+author: "Prof Dr Suhartono M.Kom UIN Maulana Malik Ibrahim Malang"
+date: "3/7/2023"
+output: html_document
+---
+
+```{r}
+# Load the MASS package
+library(MASS)
+
+# Load the Boston Housing dataset
+data(Boston)
+```
+
+```{r}
+Boston
+```
+
+```{r}
+# Create Training and Test data -
+set.seed(100)  # setting seed to reproduce results of random sampling
+trainingRowIndex <- sample(1:nrow(Boston), 0.8*nrow(Boston))  # row indices for training data
+trainingData <- Boston[trainingRowIndex, ]  # model training data
+testData  <- Boston[-trainingRowIndex, ]   # test data
+```
+
+```{r}
+# Create a linear regression model to predict median house values based on number of rooms
+fit <- lm(medv ~ rm, data = trainingData)
+
+# Print the summary of the regression model
+summary(fit)
+
+```
+
+```{r}
+# Make predictions using the regression model
+predictions <- predict(fit, newdata = testData )
+
+# Print the predictions
+print(predictions)
+```
+
+```{r}
+testData$predictions <- predictions
+testData
+```
+
+```{r}
+# Plot the data
+x <- 1:102
+y1 <-  testData$predictions
+y2 <- testData$medv
+plot(x, y1, type = "o")
+```
+
+```{r}
+AIC(fit)  # AIC => 3352.151
+BIC(fit)  # BIC => 3364.831
+```
+
+```{r}
+#plot first line
+plot(x, y1, type='o', col='red', xlab='Data Training', ylab='mdev')
+
+#add second line to plot
+lines(x, y2, col='blue')
+```
+
+```{r}
+# call Plotly and enter username and key
+library(plotly)
+
+plot_ly(x = x) %>%
+  add_lines(y = y1, color = I("red"), name = "Prediction") %>%
+  add_lines(y = y2, color = I("green"), name = "Real")
+```
+
+```{r}
+#calculate MSE
+mean((testData$medv - testData$predictions)^2)
+```

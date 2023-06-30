@@ -1,0 +1,331 @@
+---
+title: "Untitled"
+output: html_document
+---
+
+```{r}
+library(ggplot2)
+library(dplyr)
+library(tidytext)
+library(fuzzyreg)
+library(hrbrthemes)
+#library(gganimate)
+```
+
+```{r}
+q = read.csv("en.mubarakpuri.txt", header=F, stringsAsFactor=F, encoding="UTF-8", sep="|")
+head(q)
+```
+
+```{r}
+colnames(q) = c("surat", "ayat", "text")
+head(q)
+```
+
+===============================================================================
+
+```{r}
+library(tm)
+qCorpus = Corpus(VectorSource(q$text[q$surat ==1 ]))
+inspect(qCorpus)
+```
+
+```{r}
+qTerms = DocumentTermMatrix(qCorpus)
+qTerms
+```
+
+```{r}
+findFreqTerms(qTerms,5)
+```
+
+```{r}
+freq = sort(colSums(as.matrix(qTerms)),decreasing = T)
+head(freq, 10)
+```
+
+```{r}
+str(freq)
+```
+
+```{r}
+freq_word <- as.data.frame(freq)
+freq_word
+```
+
+```{r}
+freq_word$words <- rownames(freq_word)
+freq_word
+```
+
+```{r}
+freq_word <- freq_word %>%
+        mutate(rank = row_number(), total = sum(freq),`term freq` = freq / total)
+freq_word
+```
+
+```{r}
+alpha <- 0.35
+beta <- 2.7
+freq_word <- freq_word %>%
+mutate( zipfs_freq = freq / rank^alpha )
+freq_word
+```
+
+```{r}
+alpha <- 0.35
+beta <- 2.7
+freq_word <- freq_word %>%
+mutate( Zipf_Mandelbrot = freq / (rank+beta)^alpha)
+freq_word
+```
+
+```{r}
+ggplot(freq_word, aes(x = rank, y = freq)) + 
+geom_line(aes(color = "observed")) +
+  geom_line(aes(y = zipfs_freq, color = "theoretical_zipf"))+ 
+  geom_line(aes(y = zipfs_freq, color = "theoretical_Mandelbrot"))+ 
+  geom_smooth()+
+labs(x = "rank", y = "count", title = "Zipf's law visualization Al-Fatihah")
+```
+
+```{r}
+ggplot(freq_word, aes(rank, `term freq`)) +
+  geom_line() +
+  geom_smooth() +
+     scale_x_log10() +
+        scale_y_log10() +
+  labs(title = "Term Freq Vs Document Freq : Al-Fatihah", x = "log 10(doc freq)", y = "log 10(term freq)") 
+```
+
+===============================================================================
+
+```{r}
+library(tm)
+qCorpus = Corpus(VectorSource(q$text[q$surat ==2 ]))
+inspect(qCorpus)
+```
+
+```{r}
+qTerms = DocumentTermMatrix(qCorpus)
+qTerms
+```
+
+```{r}
+findFreqTerms(qTerms,50)
+```
+
+```{r}
+freq = sort(colSums(as.matrix(qTerms)),decreasing = T)
+head(freq, 10)
+```
+
+```{r}
+str(freq)
+```
+
+```{r}
+freq_word <- as.data.frame(freq)
+freq_word
+```
+
+```{r}
+freq_word$words <- rownames(freq_word)
+freq_word
+```
+
+```{r}
+freq_word <- freq_word %>%
+        mutate(rank = row_number(), total = sum(freq),`term freq` = freq / total)
+freq_word
+```
+
+```{r}
+alpha <- 0.35
+beta <- 2.7
+freq_word <- freq_word %>%
+mutate( zipfs_freq = freq / rank^alpha )
+freq_word
+```
+
+```{r}
+alpha <- 0.1
+beta <- 2.7
+freq_word <- freq_word %>%
+mutate( Zipf_Mandelbrot = freq / (rank+beta)^alpha)
+freq_word
+```
+
+```{r}
+ggplot(freq_word, aes(x = rank, y = freq)) + 
+geom_line(aes(color = "observed")) +
+  geom_line(aes(y = zipfs_freq, color = "theoretical_zipf"))+ 
+  geom_line(aes(y = zipfs_freq, color = "theoretical_Mandelbrot"))+ 
+  geom_smooth()+
+labs(x = "rank", y = "count", title = "Zipf's law visualization Al-Baqarah")
+```
+
+```{r}
+ggplot(freq_word, aes(rank, `term freq`)) +
+  geom_line() +
+  geom_smooth() +
+     scale_x_log10() +
+        scale_y_log10() +
+  labs(title = "Term Freq Vs Document Freq : Al-Baqarah", x = "log 10(doc freq)", y = "log 10(term freq)") 
+```
+
+==============================================================================
+
+
+```{r}
+library(tm)
+qCorpus = Corpus(VectorSource(q$text[q$surat ==3 ]))
+inspect(qCorpus)
+```
+
+```{r}
+qTerms = DocumentTermMatrix(qCorpus)
+qTerms
+```
+
+```{r}
+findFreqTerms(qTerms,5)
+```
+
+```{r}
+freq = sort(colSums(as.matrix(qTerms)),decreasing = T)
+head(freq, 10)
+```
+
+```{r}
+str(freq)
+```
+
+```{r}
+freq_word <- as.data.frame(freq)
+freq_word
+```
+
+```{r}
+freq_word$words <- rownames(freq_word)
+freq_word
+```
+
+```{r}
+freq_word <- freq_word %>%
+        mutate(rank = row_number(), total = sum(freq),`term freq` = freq / total)
+freq_word
+```
+
+```{r}
+alpha <- 0.35
+beta <- 2.7
+freq_word <- freq_word %>%
+mutate( zipfs_freq = freq / rank^alpha )
+freq_word
+```
+
+```{r}
+alpha <- 0.35
+beta <- 2.7
+freq_word <- freq_word %>%
+mutate( Zipf_Mandelbrot = freq / (rank+beta)^alpha)
+freq_word
+```
+
+```{r}
+ggplot(freq_word, aes(x = rank, y = freq)) + 
+geom_line(aes(color = "observed")) +
+  geom_line(aes(y = zipfs_freq, color = "theoretical_zipf"))+ 
+  geom_line(aes(y = zipfs_freq, color = "theoretical_Mandelbrot"))+ 
+  geom_smooth()+
+labs(x = "rank", y = "count", title = "Zipf's law visualization Ali Imran")
+```
+
+```{r}
+ggplot(freq_word, aes(rank, `term freq`)) +
+  geom_line() +
+  geom_smooth() +
+     scale_x_log10() +
+        scale_y_log10() +
+  labs(title = "Term Freq Vs Document Freq : Ali Imran", x = "log 10(doc freq)", y = "log 10(term freq)") 
+```
+
+=============================================================================
+
+
+```{r}
+library(tm)
+qCorpus = Corpus(VectorSource(q$text[q$surat ==3 ]))
+inspect(qCorpus)
+```
+
+```{r}
+qTerms = DocumentTermMatrix(qCorpus)
+qTerms
+```
+
+```{r}
+findFreqTerms(qTerms,5)
+```
+
+```{r}
+freq = sort(colSums(as.matrix(qTerms)),decreasing = T)
+head(freq, 10)
+```
+
+```{r}
+str(freq)
+```
+
+```{r}
+freq_word <- as.data.frame(freq)
+freq_word
+```
+
+```{r}
+freq_word$words <- rownames(freq_word)
+freq_word
+```
+
+```{r}
+freq_word <- freq_word %>%
+        mutate(rank = row_number(), total = sum(freq),`term freq` = freq / total)
+freq_word
+```
+
+```{r}
+alpha <- 0.35
+beta <- 2.7
+freq_word <- freq_word %>%
+mutate( zipfs_freq = freq / rank^alpha )
+freq_word
+```
+
+```{r}
+alpha <- 0.35
+beta <- 2.7
+freq_word <- freq_word %>%
+mutate( Zipf_Mandelbrot = freq / (rank+beta)^alpha)
+freq_word
+```
+
+```{r}
+ggplot(freq_word, aes(x = rank, y = freq)) + 
+geom_line(aes(color = "observed")) +
+  geom_line(aes(y = zipfs_freq, color = "theoretical_zipf"))+ 
+  geom_line(aes(y = zipfs_freq, color = "theoretical_Mandelbrot"))+ 
+  geom_smooth()+
+labs(x = "rank", y = "count", title = "Zipf's law visualization An Nisaa")
+```
+
+```{r}
+ggplot(freq_word, aes(rank, `term freq`)) +
+  geom_line() +
+  geom_smooth() +
+     scale_x_log10() +
+        scale_y_log10() +
+  labs(title = "Term Freq Vs Document Freq : An Nisaa", x = "log 10(doc freq)", y = "log 10(term freq)") 
+```
+
+
